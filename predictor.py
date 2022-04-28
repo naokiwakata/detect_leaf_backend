@@ -21,6 +21,9 @@ class Predictor:
 
     def __init__(self):
         # データセットを登録
+        #pthURL ="C:\\Users\\wakanao\\react-flask\\detect_leaf_backend\\model_final.pth"
+        pthURL ="/Users/wakatanaoki/projects/react-flask/detect_leaf_backend/model_final.pth"
+
         register_coco_instances(
             "leaf", {}, "PumpkinLeaf\PumpkinLeaf.json", "PumpkinLeaf/")
         self._metadata = MetadataCatalog.get("leaf")
@@ -29,11 +32,11 @@ class Predictor:
         # 設定を決める
         cfg = get_cfg()
         cfg.merge_from_file(model_zoo.get_config_file(
-            "COCO-InstanceSegmentation\\mask_rcnn_R_50_FPN_3x.yaml"))
+            "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
         cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1  # 1クラスのみ
 
         cfg.MODEL.WEIGHTS = os.path.join(
-            cfg.OUTPUT_DIR, "C:\\Users\\wakanao\\react-flask\\detect_leaf_backend\\model_final.pth")  # 絶対パスでなければならないっぽい
+            cfg.OUTPUT_DIR, pthURL)  # 絶対パスでなければならないっぽい
         cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.6
         cfg.MODEL.DEVICE = "cpu"
 
