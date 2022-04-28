@@ -1,6 +1,5 @@
-import imp
 import cv2
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, make_response, jsonify
 import numpy as np
 import datetime
 import shutil
@@ -8,8 +7,10 @@ import os
 
 from predictor import Predictor
 from fileEnum import File
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 predictor = Predictor()
 
@@ -54,7 +55,9 @@ def predict_img():
 def parse():
     data = request.get_json()
     img = data['post_img']
+    response = {'result': img}
     print(img)
+    return make_response(jsonify(response))
 
 
 if __name__ == "__main__":
