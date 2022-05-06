@@ -8,6 +8,7 @@ import os
 from predictor import Predictor
 from fileEnum import File
 from flask_cors import CORS
+import base64
 
 app = Flask(__name__)
 CORS(app)
@@ -54,9 +55,23 @@ def predict_img():
 @app.route("/trimming", methods=['GET', 'POST'])
 def parse():
     data = request.get_json()
-    img = data['post_img']
-    response = {'result': img}
-    print(img)
+    img_stream = base64.b64decode(data['post_img'])
+    img_array = np.asarray(bytearray(img_stream), dtype=np.uint8)
+    img = cv2.imdecode(img_array, 1)
+    img = np.clip(img, 0, 255).astype(np.uint8)
+
+    predictor.predict(img=img)
+    predictedImg = predictor.img
+
+    # 変換結果を保存
+    cv2.imwrite('result.png', predictedImg)
+
+    # 保存したファイルに対してエンコード
+    with open('result.png', "rb") as f:
+        img_base64 = base64.b64encode(f.read()).decode('utf-8')
+
+    response = {'result': img_base64}
+    
     return make_response(jsonify(response))
 
 
